@@ -19,10 +19,15 @@ public class Player : MonoBehaviour
 
     public bool isJumping;
     public bool doubleJump;
+    public static Player instance;
+
+    private Vector3 checkPointPosition;
     //private float movement;
     // Start is called before the first frame update
     void Start()
     {
+        //CheckPoint oi = new CheckPoint();
+        instance = this;
         rig = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
     }
@@ -108,7 +113,7 @@ public class Player : MonoBehaviour
 
     void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.layer == 6 || collision.gameObject.layer == 9) // pega layer a qual o objeto desse script esta colidindo
+        if (collision.gameObject.layer == 6 || collision.gameObject.layer == 9 || collision.gameObject.layer == 10 && collision.gameObject.layer != 11) // pega layer a qual o objeto desse script esta colidindo
         {
             isJumping = false; // se tiver colidindo com o chão vai retornar falso
             anim.SetBool("jump", false);
@@ -119,6 +124,13 @@ public class Player : MonoBehaviour
                 CheckPointFlag.animCheckPoint.SetBool("start", true);
                
             }
+        } else
+        if (collision.gameObject.layer == 11)
+        {
+            isJumping = false; // se tiver colidindo com o chão vai retornar falso
+           // doubleJump = false;
+            anim.SetBool("jump", false);
+            anim.SetBool("doubleJump", false);
         }
 
         if (collision.gameObject.layer == 7 && GameController.instance.Score > 0 && checkPoint != 1)
@@ -132,7 +144,9 @@ public class Player : MonoBehaviour
         } else
         if (collision.gameObject.layer == 7 && GameController.instance.Score > 0 && checkPoint == 1)
         {
-            transform.position = new Vector3(2.82f, -1.13f, 0f);
+
+
+            transform.position = checkPointPosition + new Vector3(0f, 0.5f,0f);  //adiciona mais altura no y
 
 
             //numberDeaths += 1;
@@ -140,13 +154,22 @@ public class Player : MonoBehaviour
         }
         if (collision.gameObject.layer == 9)
         {
+            checkPointPosition = collision.gameObject.transform.position; //Pega a posição do colieder do checkpoint 
+
             checkPoint = 1;
         }
+       /* if (collision.gameObject.layer == 11)
+        {
+            isJumping = false; // se tiver colidindo com o chão vai retornar falso
+            doubleJump = false;
+            anim.SetBool("jump", false);
+        }
+       */
     }
 
     void OnCollisionExit2D(Collision2D collision)
     {
-        if (collision.gameObject.layer == 6 || collision.gameObject.layer == 9) // pega layer a qual o objeto desse script esta colidindo
+        if (collision.gameObject.layer == 6 || collision.gameObject.layer == 9 || collision.gameObject.layer == 10 && collision.gameObject.layer != 11) // pega layer a qual o objeto desse script esta colidindo
         {
             doubleJump = true;
             isJumping = true; // se NÃO tiver colidindo com o chão vai retornar verdadeiro para pulando
@@ -155,7 +178,27 @@ public class Player : MonoBehaviour
                 CheckPointFlag.animCheckPoint.SetBool("FlagAlways", true);
 
             }
+        } else
+            if (collision.gameObject.layer == 11)
+        {
+            Debug.Log("OLA PASSOU AUQI");
+            isJumping = true;
+            doubleJump = false;
         }
-    }
+        /*
+        if (collision.gameObject.layer == 11)
+        {
+            isJumping = true;
+            doubleJump = false;
+
+
+        } else
+        {
+            isJumping = false;
+            doubleJump = true;
+        }
+    */
+
+}
 
 }

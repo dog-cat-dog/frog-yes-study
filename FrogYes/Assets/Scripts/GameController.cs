@@ -15,6 +15,8 @@ public class GameController : MonoBehaviour
     public Text scoreText;
     public Player player;
     public Button restartButton, leaveButton;
+
+    public bool mouseClick = false;
  
 
    
@@ -46,6 +48,8 @@ public class GameController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        //mouseClick = false;
+        MouseClick();
         if (Score != 5 && Score > 0)
         {
             ScoreTotal.totalScore = Score;
@@ -66,8 +70,25 @@ public class GameController : MonoBehaviour
             scoreText.text = Score.ToString();
         //player.Lifes = Score;
         //}
+
+
     }
 
+     public void MouseClick()
+     {
+         if (Input.GetMouseButtonDown(0))
+         {
+             Debug.Log("Pressed primary button.");
+             mouseClick = true;
+         } else
+            if (!Input.GetMouseButtonDown(0))
+        {
+           // Debug.Log("STOPED Pressing primary button.");
+            mouseClick = false;
+        }
+     }
+    
+    
     public void ShowGameOver()
     {
         gameOver.SetActive(true);
