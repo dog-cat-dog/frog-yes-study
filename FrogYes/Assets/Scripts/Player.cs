@@ -10,18 +10,24 @@ public class Player : MonoBehaviour
     public float doubleJumpForce;
     public int numberDeaths;
     private int checkPoint;
-   // public int Lifes = 5;
-    
+    // public int Lifes = 5;
+
 
 
     private Rigidbody2D rig;
     private Animator anim;
+    private float timer;
+    private float interval = 0.5f;
 
     public bool isJumping;
     public bool doubleJump;
     public static Player instance;
 
     private Vector3 checkPointPosition;
+
+    [SerializeField] private AudioSource jumpSoundEffect;
+    [SerializeField] private AudioSource walkSoundEffect;
+
     //private float movement;
     // Start is called before the first frame update
     void Start()
@@ -49,9 +55,17 @@ public class Player : MonoBehaviour
         transform.position += movement;
         anim.SetBool("run", true);
 
+        timer += Time.deltaTime;
+
 
         if (Input.GetAxis("Horizontal") < 0f)
         {
+            if (timer >= interval)
+            {
+                walkSoundEffect.Play();
+                timer = 0f;
+            }
+            //walkSoundEffect.Play();
             transform.eulerAngles = new Vector3(0, 180, 0);  //eulerangles altera os angulos
 
 
@@ -59,6 +73,12 @@ public class Player : MonoBehaviour
         else
             if (Input.GetAxis("Horizontal") > 0f)
         {
+            if (timer >= interval)
+            {
+                walkSoundEffect.Play();
+                timer = 0f;
+            }
+            //walkSoundEffect.Play();      
             transform.eulerAngles = new Vector3(0, 0, 0);
 
         }
@@ -66,6 +86,7 @@ public class Player : MonoBehaviour
             if (Input.GetAxis("Horizontal") == 0f)
         {
             anim.SetBool("run", false);
+            walkSoundEffect.Stop();
         }
 
     }
@@ -86,6 +107,7 @@ public class Player : MonoBehaviour
                 doubleJump = true;
                 anim.SetBool("jump", true);
                 anim.SetBool("doubleJump", false);
+                jumpSoundEffect.Play();
             }
             else // double jump
             if (doubleJump == true)
@@ -95,6 +117,7 @@ public class Player : MonoBehaviour
                 doubleJump = false;
                 //anim.SetBool("jump", false);
                 anim.SetBool("doubleJump", true);
+                jumpSoundEffect.Play();
             }
             // else
             // if(isJumping == true)
@@ -108,7 +131,7 @@ public class Player : MonoBehaviour
 
     }
 
-    
+
 
 
     void OnCollisionEnter2D(Collision2D collision)
@@ -122,13 +145,14 @@ public class Player : MonoBehaviour
             if (collision.gameObject.layer == 9)
             {
                 CheckPointFlag.animCheckPoint.SetBool("start", true);
-               
+
             }
-        } else
+        }
+        else
         if (collision.gameObject.layer == 11)
         {
             isJumping = false; // se tiver colidindo com o chão vai retornar falso
-           // doubleJump = false;
+                               // doubleJump = false;
             anim.SetBool("jump", false);
             anim.SetBool("doubleJump", false);
         }
@@ -137,16 +161,17 @@ public class Player : MonoBehaviour
         {
             transform.position = new Vector3(-7.83f, -2.18f, 0f);
 
-            
+
             //numberDeaths += 1;
             GameController.instance.Score -= 1;
 
-        } else
+        }
+        else
         if (collision.gameObject.layer == 7 && GameController.instance.Score > 0 && checkPoint == 1)
         {
 
 
-            transform.position = checkPointPosition + new Vector3(0f, 0.5f,0f);  //adiciona mais altura no y
+            transform.position = checkPointPosition + new Vector3(0f, 0.5f, 0f);  //adiciona mais altura no y
 
 
             //numberDeaths += 1;
@@ -158,13 +183,13 @@ public class Player : MonoBehaviour
 
             checkPoint = 1;
         }
-       /* if (collision.gameObject.layer == 11)
-        {
-            isJumping = false; // se tiver colidindo com o chão vai retornar falso
-            doubleJump = false;
-            anim.SetBool("jump", false);
-        }
-       */
+        /* if (collision.gameObject.layer == 11)
+         {
+             isJumping = false; // se tiver colidindo com o chão vai retornar falso
+             doubleJump = false;
+             anim.SetBool("jump", false);
+         }
+        */
     }
 
     void OnCollisionExit2D(Collision2D collision)
@@ -178,7 +203,8 @@ public class Player : MonoBehaviour
                 CheckPointFlag.animCheckPoint.SetBool("FlagAlways", true);
 
             }
-        } else
+        }
+        else
             if (collision.gameObject.layer == 11)
         {
             Debug.Log("OLA PASSOU AUQI");
@@ -199,6 +225,6 @@ public class Player : MonoBehaviour
         }
     */
 
-}
+    }
 
 }
