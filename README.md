@@ -1,2 +1,2 @@
 # frog-yes-study
-First platform game to study
+Simple platform game where you control a ninja frog and have to catch strawberries!
